@@ -471,6 +471,10 @@ window.__ModuleLoader__.load({ id: `dsh-tauri-monitor`, factory: (require) => {
   // 注册
   // ---------------------------------------------------------------------------
 
+  // ---------------------------------------------------------------------------
+  // 注册
+  // ---------------------------------------------------------------------------
+
   const registerPanel = dsh.defineRegister((ctl, ctx) => {
     const handle = dsh.definePanel(ctx, {
       id: NS,
@@ -478,7 +482,7 @@ window.__ModuleLoader__.load({ id: `dsh-tauri-monitor`, factory: (require) => {
       locale: T.NS,
       label: () => T.text(`title`),
       icon: (props) => j.jsx(MonitorNavIcon, { size: props?.size ?? 16 }),
-      render: () => j.jsx(PanelView),
+      render: PanelView,
     });
     ctl.add(() => handle.dispose());
   });
