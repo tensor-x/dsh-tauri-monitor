@@ -1,0 +1,30 @@
+{
+  "name": "dsh-tauri-monitor",
+  "version": "1.0.0",
+  "description": "DSH Desktop 监控插件：通用 HTTP 轮询规则引擎，条件命中才唤醒新可见会话执行任务，未命中零 LLM 交互。仿 dsh-tauri-scheduler 架构。",
+  "type": "module",
+  "main": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./client": "./dist/client.cjs",
+    "./package.json": "./package.json"
+  },
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-locale",
+        "dsh-tauri",
+        "dsh-tauri-ui"
+      ],
+      "external": [
+        "dsh-tauri/client",
+        "dsh-tauri-ui/client"
+      ],
+      "platform": "web"
+    }
+  }
+}

@@ -1,0 +1,5 @@
+# dsh-tauri-monitor：监控插件（通用 HTTP 轮询 → 条件命中 → 唤醒可见会话）
+# 插入自身；不禁用任何既有插件（与 scheduler 的 schedule/ui-schedule 共存）。
+- insert:
+    - id: dsh-tauri-monitor
+      name: dsh-tauri-monitor
