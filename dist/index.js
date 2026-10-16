@@ -1112,6 +1112,15 @@ const TOOLS = [
       },
       required: ["rule"],
     },
+    output: {
+      schema: {
+        type: "object",
+        additionalProperties: true,
+        properties: { ok: { type: "boolean" }, rule: { type: "object" }, error: { type: "string" }, hint: { type: "string" } },
+        required: ["ok"],
+      },
+      render: (_args, value) => textBlock(JSON.stringify(value)),
+    },
     async execute(args) {
       const result = await createRule(args?.rule);
       if (!result.ok) return result;
@@ -1126,6 +1135,15 @@ const TOOLS = [
     name: "monitor_rule_list",
     description: "List monitor rules with live status (last poll, errors, fire count). Use when the user asks about existing monitors.",
     parameters: { type: "object", properties: {} },
+    output: {
+      schema: {
+        type: "object",
+        additionalProperties: true,
+        properties: { rules: { type: "array" } },
+        required: ["rules"],
+      },
+      render: (_args, value) => textBlock(JSON.stringify(value)),
+    },
     async execute() {
       return { rules: enrichRules() };
     },
@@ -1138,6 +1156,15 @@ const TOOLS = [
       properties: { id: { type: "string" }, patch: { type: "object" } },
       required: ["id", "patch"],
     },
+    output: {
+      schema: {
+        type: "object",
+        additionalProperties: true,
+        properties: { ok: { type: "boolean" }, rule: { type: "object" }, error: { type: "string" } },
+        required: ["ok"],
+      },
+      render: (_args, value) => textBlock(JSON.stringify(value)),
+    },
     async execute(args) {
       const result = await updateRule(args.id, args.patch || {});
       return result;
@@ -1147,6 +1174,15 @@ const TOOLS = [
     name: "monitor_rule_delete",
     description: "Delete a monitor rule by id (also clears its state).",
     parameters: { type: "object", properties: { id: { type: "string" } }, required: ["id"] },
+    output: {
+      schema: {
+        type: "object",
+        additionalProperties: true,
+        properties: { ok: { type: "boolean" }, error: { type: "string" } },
+        required: ["ok"],
+      },
+      render: (_args, value) => textBlock(value.ok ? "✅ 已删除监控规则。" : `❌ 删除失败：${value.error}`),
+    },
     async execute(args) {
       return await deleteRule(args.id);
     },
@@ -1157,6 +1193,15 @@ const TOOLS = [
       "Dry-run one poll cycle of a monitor rule now: fetches all steps, evaluates events, " +
       "reports which events would fire — without touching state or waking any agent.",
     parameters: { type: "object", properties: { id: { type: "string" } }, required: ["id"] },
+    output: {
+      schema: {
+        type: "object",
+        additionalProperties: true,
+        properties: { ok: { type: "boolean" }, vars: {}, events: { type: "array" }, newEvents: { type: "array" }, error: { type: "string" } },
+        required: ["ok"],
+      },
+      render: (_args, value) => textBlock(JSON.stringify(value)),
+    },
     async execute(args) {
       const rule = runtime.rules.find((item) => item.id === args.id);
       if (!rule) return { ok: false, error: `规则不存在: ${args.id}` };
@@ -1173,6 +1218,15 @@ const TOOLS = [
     description:
       "Force-fire a monitor rule now: polls once and (if any events match, ignoring dedup) wakes the agent session immediately. Use when the user wants to trigger a monitor manually.",
     parameters: { type: "object", properties: { id: { type: "string" } }, required: ["id"] },
+    output: {
+      schema: {
+        type: "object",
+        additionalProperties: true,
+        properties: { ok: { type: "boolean" }, run: { type: "object" }, error: { type: "string" } },
+        required: ["ok"],
+      },
+      render: (_args, value) => textBlock(JSON.stringify(value)),
+    },
     async execute(args) {
       const rule = runtime.rules.find((item) => item.id === args.id);
       if (!rule) return { ok: false, error: `规则不存在: ${args.id}` };
@@ -1192,6 +1246,10 @@ const TOOLS = [
 // ---------------------------------------------------------------------------
 // 装载
 // ---------------------------------------------------------------------------
+
+function textBlock(text) {
+  return [{ type: "text", text }];
+}
 
 async function loadAll() {
   await mkdir(STORE_DIR, { recursive: true });
